@@ -21,11 +21,8 @@ class CreateProgramsTable extends Migration
             $table->integer("Lab_fee");
             $table->integer("late_fee");
             $table->integer("total_semesters");
-            $table->date("initial_date_fall_semester");
-            $table->date("initial_date_spring_semester");
-            $table->date("end_date_fall_semester");
-            $table->date("end_date_spring_semester");
-            $table->integer("number_of_days_late");
+            $table->date("late_date");
+            $table->boolean("payment_active");
             $table->timestamps();
         });
     }

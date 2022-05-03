@@ -6,7 +6,6 @@
         <!-- <link href="/dist/output.css" rel="stylesheet"> -->
     </head>
 <body >
-    <p>{{ asset('css/app.css') }}</p>
     @include('layout.header')
 
     @yield('content')

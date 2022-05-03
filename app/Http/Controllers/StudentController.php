@@ -13,14 +13,18 @@ class StudentController extends Controller
         if ($request->roll_no && $request->password) {
             try {
                 $q = student::where(['roll_no'=>$request->roll_no,'password'=>$request->password]);
-                $_student = $q->first();
-                $_student->program = program::whereId($_student->program_id)->first(); 
-                return $q->exists() ? response()->json(["success"=> true,"message"=>'user log in successfully', 'data'=> $_student]) : response()->json(["success"=> false,"message"=>"Login failed, Roll number or password is incorrect"]); 
+                if ($q->exists()) {
+                    $_student = $q->first();
+                    $_student->program = program::whereId($_student->program_id)->first(); 
+                    return $this->responseMessage($_student,'user log in successfully'); 
+                }else{
+                    return $this->responseMessage(null,"Login failed, Roll number or password is incorrect"); 
+                }
             } catch (Exception $th) {
-                return response()->json(["success"=> false,"message"=>$th->getMessage()]);
+                return $this->responseMessage(null,$th->getMessage());
             }
         }else{
-            return response()->json(["success"=> false,"message"=>"roll number and password required"]);
+            return $this->responseMessage(null,"roll number and password required");
         }
     }
 }

@@ -9,28 +9,16 @@ use Exception;
 class ProgramController extends Controller
 {
     public function index(){
-        try{
-            return response()->json(program::all());
-        }catch(Exception $ex){
-            return response($ex->getMessage());
-        }
+      return view('program.index',['programs'=>program::all()]);
+        
     }
    public function create(Request $request){ 
-        return response()->json($request->lname);
+        return view('program.create');
     }
     public function store(Request $request)
     {
-        $_fees = new program();
-        $_fees->program_id = $request->input('program_id');
-        $_fees->transaction_state = $request->input('transaction_state');
-        $_fees->amount = $request->input('amount');
-        $_fees->student_id = $request->input('student_id');
-        try{
-            $_fees->save();
-        }catch(Exception $ex){
-            return response($ex->getMessage());
-        }
-        return response()->json($_fees);
+        program::create($request->all());
+        return view('program.index');
     }
 
     /**

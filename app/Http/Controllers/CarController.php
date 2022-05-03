@@ -22,7 +22,6 @@ class CarController extends Controller
         //         print_r($i);
         //     }
         // });
-        log(DB::unprepared(file_get_contents('/')));
         return view('cars.index', ['cars' => $data]);
     }
 
