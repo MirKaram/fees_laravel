@@ -15,4 +15,13 @@ class Controller extends BaseController
     {
         return response()->json(["success"=>$data!=null,'message'=>$message,'data'=>$data]);
     }
+    public function setUser($user){
+        session(['user_'=>$user]);
+    }
+    public function logoutUser(){
+        session()->flush();
+    }
+    public function userLogged(){
+        return session()->has('user_');
+    }
 }

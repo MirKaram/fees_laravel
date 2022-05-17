@@ -20,7 +20,7 @@ class CreateFeesTable extends Migration
             $table->integer("amount");
             $table->integer("semester")->default(0);
             $table->string("transaction_state",20)->default("unpaid");
-            $table->binary("receipt_image")->nullable();
+            $table->string("receipt_image")->nullable();
             $table->timestamps();
         });
     }

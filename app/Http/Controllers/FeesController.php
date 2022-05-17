@@ -13,16 +13,21 @@ use Illuminate\Support\Str;
 
 class FeesController extends Controller
 {
-    public function test(Request $r)
+    public function index()
     {
-        return $_POST['image'];
-    }
-    public function index(){
-        try{
-            return response()->json(fees::all());
-        }catch(Exception $ex){
-            return response($ex->getMessage());
+        $l = fees::all();
+        for ($i = 0; $i < count($l); $i++) {
+            $l[$i]->program = program::where('id', $l[$i]->program_id)->first()->name;
+            $std = student::where('id', $l[$i]->student_id)->first();
+            $l[$i]->name = $std->name;
+            $l[$i]->roll_no = $std->roll_no;
         }
+        return view('fees.index', ['dataList' => $l]);
+    }
+    public function approve_fees($id)
+    {
+        fees::whereId($id)->update(['transaction_state'=>'paid']);
+        return $this->index();
     }
     public function fees_status($id)
     {
@@ -39,14 +44,14 @@ class FeesController extends Controller
             $total_fee += $prg->semester_fee;
             $total_fee += $prg->admission_fee;
             $total_fee += $prg->Lab_fee;
-        }else{
+        } else {
             $total_fee = $prg->semester_fee;
         }
         $diff = Carbon::parse('2022-04-18')->diffForHumans(Carbon::now());
         if (strpos($diff, 'after')) {
-            $total_fee += $prg->semester_fee; 
+            $total_fee += $prg->semester_fee;
         }
-        $trnsactions = fees::where(['student_id'=>$std->id,'semester'=>$std->current_semester]);
+        $trnsactions = fees::where(['student_id' => $std->id, 'semester' => $std->current_semester]);
         if (!$trnsactions->exists()) {
             return response('unpaid');
         }
@@ -54,19 +59,15 @@ class FeesController extends Controller
         foreach ($trnsactions as $value) {
             $trnsactions_amount += $trnsactions->amount;
         }
-       
+
         return $trnsactions_amount >= $total_fee ? response('paid') : response('unpaid');
     }
-   public function create(Request $request){ 
+    public function create(Request $request)
+    {
         return response()->json($request->lname);
     }
     public function store(Request $request)
     {
-        $path = '';
-        if ($file = $request->file('image')) {
-            // $path = $file->store('toPath', ['disk' => 'public']);
-            file_put_contents('/Volumes/disk_1/laravel_workspace/testWebApp/public/images/file__ee.jpg', $file->get());
-        }
         $dd = json_decode($request->fees_data);
         $_fees = new fees();
         $_fees->program_id = $dd->program_id;
@@ -75,15 +76,20 @@ class FeesController extends Controller
         $_fees->amount = $dd->amount;
         $_fees->semester = $dd->semester;
         $_fees->transaction_state = $dd->transaction_state;
-        // $_fees->receipt_image = $path;
-        try{
-            $_fees->save();
-        }catch(Exception $ex){
-            return $this->responseMessage(null,$ex->getMessage());
+        if (isset($request->image)) {
+            $imageName = time() . '_std_id_' . $dd->student_id . '.' . $request->file('image')->getClientOriginalExtension();
+            $path = '/receipts/' . $imageName; //$request->file('image')->storeAs('receipt',$imageName);
+            $request->file('image')->move(public_path('receipts'), $imageName);
+            $_fees->receipt_image = $path;
         }
-        return $this->responseMessage($_fees,"Payment receipt received and added to queue to review");
-    }
 
+        try {
+            $_fees->save();
+        } catch (Exception $ex) {
+            return $this->responseMessage(null, $ex->getMessage());
+        }
+        return $this->responseMessage($_fees, "Payment receipt received and added to queue for review");
+    }
     /**
      * Display the specified resource.
      *
@@ -92,12 +98,11 @@ class FeesController extends Controller
      */
     public function show($id)
     {
-        return $_GET['image'];
-        try{
-             return response()->json(fees::whereId($id)->first());
-         }catch(Exception $ex){
-             return response($ex->getMessage());
-         }
+        try {
+            return response()->json(fees::whereId($id)->first());
+        } catch (Exception $ex) {
+            return response($ex->getMessage());
+        }
     }
 
     /**
@@ -108,22 +113,35 @@ class FeesController extends Controller
      */
     public function edit($id)
     {
-        return "edit".$id;
+        $f = fees::whereId($id)->first();
+        $f->program = program::whereId($f->program_id)->first()->name;
+        $std = student::whereId($f->program_id)->first();
+        $f->student_name = $std->name;
+        $f->student_roll_no = $std->roll_no;
+        return view('fees.create', ['fees' => $f]);
+
+        // $programs = program::all();
+        // $std = student::whereId(31)->first();
+        // return view('fees.create',['update'=>true,'student'=>$std,'programs'=>$programs]); 
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
-        try{
-           $model =  fees::whereId($id);
+        try {
+            if (isset($request->web)) {
+                fees::whereId($id)
+                    ->update([
+                        'amount' => $request->amount,
+                        'transaction_state' => $request->transaction_state
+                    ]);
+
+                return $this->index();
+            }
+
+            $model =  fees::whereId($id);
             return response($model->update($request->all()) == 1 ? 'updated' : 'error');
-        }catch(Exception $ex){
+        } catch (Exception $ex) {
             return response($ex->getMessage());
         }
     }
@@ -136,7 +154,6 @@ class FeesController extends Controller
      */
     public function destroy($id)
     {
-        return "delet-".$id;
+        return "delet-" . $id;
     }
-    
 }

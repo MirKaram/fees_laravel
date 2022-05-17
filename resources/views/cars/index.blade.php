@@ -5,7 +5,7 @@
             <h2 class="text-5xl uppercase bold">
                 This is car Page
             </h2>
-            <p class="text-ml italic">
+            <p class="text-ml italic" >
                 Total = {{ $cars->count() }} cars
             </p>
         </div>

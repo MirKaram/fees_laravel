@@ -8,11 +8,15 @@ use Exception;
 
 class ProgramController extends Controller
 {
-    public function index(){
-      return view('program.index',['programs'=>program::all()]);
-        
+    public function index()
+    {
+        if (!$this->userLogged()) {
+            return redirect()->route('login');
+        }
+        return view('program.index', ['dataList' => program::all()]);
     }
-   public function create(Request $request){ 
+    public function create(Request $request)
+    {
         return view('program.create');
     }
     public function store(Request $request)
@@ -21,58 +25,38 @@ class ProgramController extends Controller
         return view('program.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        try{
-             return response()->json(program::whereId($id)->first());
-         }catch(Exception $ex){
-             return response($ex->getMessage());
-         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        return "edit".$id;
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        try{
-           $model =  program::whereId($id);
-            return response($model->update($request->all()) == 1 ? 'updated' : 'error');
-        }catch(Exception $ex){
+        try {
+            return response()->json(program::whereId($id)->first());
+        } catch (Exception $ex) {
             return response($ex->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function edit($id)
+    {
+        $program = program::whereId($id)->first();
+        // dd($program);
+        return view('program.create',['program'=>$program]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $data = $request->all();
+            unset($data['_token']);
+            unset($data['_method']);
+            $model =  program::whereId($id);
+            $model->update($data);
+            return $this->index();
+        } catch (Exception $ex) {
+            return response($ex->getMessage());
+        }
+    }
+
     public function destroy($id)
     {
-        return "delet-".$id;
+        return "delet-" . $id;
     }
-    
 }

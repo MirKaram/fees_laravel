@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class admin extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -17,8 +18,9 @@ class admin extends Controller
     {
         $admin = new User();
         $admin->name = "sdaskdjkalsd";
-        return view('index');
+        return view('login');
     }
+
     public function about()
     {
         return view('about');
@@ -40,9 +42,9 @@ class admin extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function login(Request $request)
     {
-        //
+        return "lkjj;";
     }
 
     /**
