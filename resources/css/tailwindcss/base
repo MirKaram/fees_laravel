@@ -3,7 +3,7 @@ body {
 }
 
 .card {
-    @apply rounded-xl bg-white p-4 max-w-sm shadow-lg;
+    @apply rounded-xl bg-white p-4 shadow-lg;
 }
 
 .toggle-bg:after {

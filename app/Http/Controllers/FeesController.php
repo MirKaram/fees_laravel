@@ -10,6 +10,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use SebastianBergmann\Environment\Console;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 class FeesController extends Controller
 {
@@ -98,6 +100,7 @@ class FeesController extends Controller
      */
     public function show($id)
     {
+        return "Show ".$id;
         try {
             return response()->json(fees::whereId($id)->first());
         } catch (Exception $ex) {
@@ -154,6 +157,7 @@ class FeesController extends Controller
      */
     public function destroy($id)
     {
-        return "delet-" . $id;
+        fees::destroy($id);
+        return $this->index();
     }
 }

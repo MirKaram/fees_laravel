@@ -1,13 +1,10 @@
 <?php
 
-use App\Http\Controllers\admin;
-use App\Http\Controllers\CarController;
 use App\Http\Controllers\FeesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\postController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\StudentController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,17 +27,15 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', [HomeController::class, 'loginview'])->name('login');
 Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login', [HomeController::class, 'login']);
-Route::post('/update_program_state/', [HomeController::class, 'updateFeeState']);
 
 Route::get('/about', [postController::class, 'about'])->name('about');
 // Route::get('/{id}', [admin::class,'productById'])->where('id','[0-9]+');
 
-Route::resource('/cars', CarController::class)->name('index', 'cars');
-
 
 Route::get('/api/feestatus/{id}', [FeesController::class, 'fees_status']);
 Route::get('/approve_fees/{id}', [FeesController::class, 'approve_fees']);
-Route::resource('/api/program', ProgramController::class)->name('index', 'program');
 Route::resource('/api/fees', FeesController::class)->name('index', 'fees');
+Route::resource('/api/program', ProgramController::class)->name('index', 'program');
+Route::post('/update_program_state', [ProgramController::class, 'updateFeeState']);
 Route::resource('/api/student', StudentController::class)->name('index', 'student');
 Route::post('/api/login', [StudentController::class, 'login']);

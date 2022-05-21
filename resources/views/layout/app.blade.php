@@ -4,6 +4,7 @@
         <title>Test Page</title>
         <link rel="stylesheet" href="{{ asset('css/app.css') }}" >
         <!-- <link href="/dist/output.css" rel="stylesheet"> -->
+        <!-- <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}"> -->
     </head>
 <body>
     @include('layout.header')

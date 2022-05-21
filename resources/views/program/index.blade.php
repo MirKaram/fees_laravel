@@ -71,7 +71,14 @@
                     {{explode(" ",$item->created_at)[0]}}
                 </td>
                 <td class="px-2 py-4 text-center">
-                    <a href="{{url('api/program/'.$item->id.'/edit')}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    <div class="flex content-center item-center justify-center">
+                        <a href="{{url('api/program/'.$item->id.'/edit')}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <form method="POST" action="{{route('program.destroy',$item->id)}}" action="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-700 ml-2">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach

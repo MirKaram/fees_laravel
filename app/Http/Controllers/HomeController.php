@@ -18,7 +18,12 @@ class HomeController extends Controller
             return view('login');
         }
         $programs = program::all();
-        return view('index',['programs'=>$programs,'students'=>student::all()->count(),'fees_collected'=>DB::table('fees')->sum('amount')]);
+        $data = student::select(DB::raw("COUNT(*) as count"), DB::raw("MONTH(created_at) month_name"),DB::raw('max(created_at) as createdAt'))
+        ->whereYear('created_at', date('Y'))
+        ->groupBy('month_name')
+        ->orderBy('createdAt')
+        ->get();
+        return view('index',['lineChart'=>$data,'programs'=>$programs,'students'=>student::all()->count(),'fees_collected'=>DB::table('fees')->sum('amount')]);
     }
     public function loginview()
     {
@@ -38,14 +43,5 @@ class HomeController extends Controller
     {
         $this->logoutUser();
         return redirect('login');
-    }
-    public function updateFeeState(Request $request){
-        program::query()->update(['payment_active'=>false]);
-        foreach ($request->all() as $key => $value) {
-            if (is_int($key)) {
-                program::where('id',$key)->update(['payment_active'=>true]);
-            }
-        }
-        return redirect()->route('home');
     }
 }

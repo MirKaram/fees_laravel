@@ -55,14 +55,21 @@
                     @if(isset($item->receipt_image))
                     <a href="{{url($item->receipt_image)}}">open</a>
                     @else
-                        Nil
+                    Nil
                     @endif
                 </td>
                 <td class="pl-2 py-4 text-center">
-                    <a href="{{url('api/fees/'.$item->id.'/edit')}}" class="mr-2 font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                    @if($item->transaction_state == 'unpaid')
-                    <a href="{{url('approve_fees/'.$item->id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve</a>
-                    @endif
+                    <div class="flex content-center item-center justify-center">
+                        <a href="{{url('api/fees/'.$item->id.'/edit')}}" class="mr-2 font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        @if($item->transaction_state == 'unpaid')
+                        <a href="{{url('approve_fees/'.$item->id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Approve</a>
+                        @endif
+                        <form method="POST" action="{{route('fees.destroy',$item->id)}}" action="POST">
+                            @csrf
+                            @method('DELETE')  
+                            <button type="submit" class="text-red-700 ml-2">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach

@@ -43,6 +43,11 @@ class StudentController extends Controller
         student::findOrFail($id)->fill($std)->save();
         return $this->index();
     }
+    public function destroy($id)
+    {
+        student::destroy($id);
+        return $this->index();
+    }
     public function login(Request $request){
         if ($request->roll_no && $request->password) {
             try {

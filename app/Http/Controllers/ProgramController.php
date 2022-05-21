@@ -57,6 +57,16 @@ class ProgramController extends Controller
 
     public function destroy($id)
     {
-        return "delet-" . $id;
+        program::destroy($id);
+        return $this->index();
+    }
+    public function updateFeeState(Request $request){
+        program::query()->update(['payment_active'=>false]);
+        foreach ($request->all() as $key => $value) {
+            if (is_int($key)) {
+                program::where('id',$key)->update(['payment_active'=>true]);
+            }
+        }
+        return redirect()->route('home');
     }
 }
