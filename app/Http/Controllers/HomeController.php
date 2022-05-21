@@ -23,7 +23,11 @@ class HomeController extends Controller
         ->groupBy('month_name')
         ->orderBy('createdAt')
         ->get();
-        return view('index',['lineChart'=>$data,'programs'=>$programs,'students'=>student::all()->count(),'fees_collected'=>DB::table('fees')->sum('amount')]);
+        $xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+        $yValues = [55, 49, 44, 24, 15];
+        $barColors = ["red", "green", "blue", "orange", "brown"];
+
+        return view('index',['xValues'=>$xValues,'yValues'=>$yValues,'barColors'=>$barColors,'programs'=>$programs,'students'=>student::all()->count(),'fees_collected'=>DB::table('fees')->sum('amount')]);
     }
     public function loginview()
     {

@@ -51,9 +51,36 @@
             </form>
         </div>
         <div class="col-span-2 card">
-            <div id="google-line-chart" style="width: 600px; height: 400px">Statistics Area</div>
+        <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
         </div>
     </div>
 </div>
+
+<script src="{{asset('js/chart.js')}}"></script>
+<script>
+    var xValues = ["Jan", "Feb", "March", "April", "May"];
+    var yValues = [120000, 230000, 400000, 550343, 800000];
+    var barColors = "orange";
+
+    new Chart("myChart", {
+        type: "bar",
+        data: {
+            labels: xValues,
+            datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+            }]
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            title: {
+                display: true,
+                text: "Fees collection states 2022"
+            }
+        }
+    });
+</script>
 
 @endsection
