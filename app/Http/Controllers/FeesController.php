@@ -34,6 +34,9 @@ class FeesController extends Controller
     public function fees_status($id)
     {
         $std = student::whereId($id)->first();
+        if ($std == null) {
+            return 'error';
+        }
         $prg = program::whereId($std->program_id)->first();
         if ($std->current_semester > $prg->total_semesters) {
             return response('Degree Completed');
@@ -70,14 +73,13 @@ class FeesController extends Controller
     }
     public function store(Request $request)
     {
-        $dd = json_decode($request->fees_data);
+        try {
+        $dd = json_decode(str_replace('\n', '', $request->fees_data));
         $_fees = new fees();
         $_fees->program_id = $dd->program_id;
         $_fees->student_id = $dd->student_id;
-        $_fees->transaction_state = $dd->transaction_state;
         $_fees->amount = $dd->amount;
         $_fees->semester = $dd->semester;
-        $_fees->transaction_state = $dd->transaction_state;
         if (isset($request->image)) {
             $imageName = time() . '_std_id_' . $dd->student_id . '.' . $request->file('image')->getClientOriginalExtension();
             $path = '/receipts/' . $imageName; //$request->file('image')->storeAs('receipt',$imageName);
@@ -85,7 +87,7 @@ class FeesController extends Controller
             $_fees->receipt_image = $path;
         }
 
-        try {
+        
             $_fees->save();
         } catch (Exception $ex) {
             return $this->responseMessage(null, $ex->getMessage());
@@ -119,6 +121,9 @@ class FeesController extends Controller
         $f = fees::whereId($id)->first();
         $f->program = program::whereId($f->program_id)->first()->name;
         $std = student::whereId($f->program_id)->first();
+        if ($std == null) {
+            return view('message',['message'=>'Student attached to this record not exist in database.']);
+        }
         $f->student_name = $std->name;
         $f->student_roll_no = $std->roll_no;
         return view('fees.create', ['fees' => $f]);

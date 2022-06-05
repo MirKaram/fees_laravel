@@ -18,16 +18,15 @@ class HomeController extends Controller
             return view('login');
         }
         $programs = program::all();
-        $data = student::select(DB::raw("COUNT(*) as count"), DB::raw("MONTH(created_at) month_name"),DB::raw('max(created_at) as createdAt'))
-        ->whereYear('created_at', date('Y'))
-        ->groupBy('month_name')
-        ->orderBy('createdAt')
-        ->get();
-        $xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-        $yValues = [55, 49, 44, 24, 15];
-        $barColors = ["red", "green", "blue", "orange", "brown"];
-
-        return view('index',['xValues'=>$xValues,'yValues'=>$yValues,'barColors'=>$barColors,'programs'=>$programs,'students'=>student::all()->count(),'fees_collected'=>DB::table('fees')->sum('amount')]);
+        $xValues = [];
+        $yValues = [];
+        
+        foreach($programs as $item){
+            $xValues[] =  $item->name;
+            $yValues[] = fees::where([['program_id','=',$item->id],['created_at','>',date('Y-m-d H:i:s',strtotime("-1 month"))]])->sum('amount');
+        }
+        $total_students = student::all()->count();
+        return view('index',['xValues'=>$xValues,'yValues'=>$yValues,'programs'=>$programs,'students'=>$total_students,'fees_collected'=>DB::table('fees')->sum('amount')]);
     }
     public function loginview()
     {
@@ -47,5 +46,9 @@ class HomeController extends Controller
     {
         $this->logoutUser();
         return redirect('login');
+    }
+    public function about()
+    {
+        return view('about');
     }
 }

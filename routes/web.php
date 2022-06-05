@@ -28,7 +28,7 @@ Route::get('/login', [HomeController::class, 'loginview'])->name('login');
 Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login', [HomeController::class, 'login']);
 
-Route::get('/about', [postController::class, 'about'])->name('about');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
 // Route::get('/{id}', [admin::class,'productById'])->where('id','[0-9]+');
 
 

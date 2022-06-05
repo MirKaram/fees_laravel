@@ -55,13 +55,11 @@
         </div>
     </div>
 </div>
-
 <script src="{{asset('js/chart.js')}}"></script>
 <script>
-    var xValues = ["Jan", "Feb", "March", "April", "May"];
-    var yValues = [120000, 230000, 400000, 550343, 800000];
+    var xValues = @json($xValues);
+    var yValues = @json($yValues);
     var barColors = "orange";
-
     new Chart("myChart", {
         type: "bar",
         data: {

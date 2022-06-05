@@ -22,7 +22,7 @@ class ProgramController extends Controller
     public function store(Request $request)
     {
         program::create($request->all());
-        return view('program.index');
+        return $this->index();
     }
 
     public function show($id)
